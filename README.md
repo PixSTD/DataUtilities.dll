@@ -11,32 +11,91 @@
 ## 🚀 Быстрый старт
 ```csharp
 	using DataUtilities;
+	using System;
+	using System.IO;
+	using System.Threading.Tasks;
 
-	// 1. Создайте экземпляр
-	// sizeNameDirectory/sizeNameFile - размер имени директории/файла при сохранении,
-	// пример: "player/profile" => "(хеш размером sizeNameDirectory)/(хеш размером sizeNameFile)"
-
-	var data = new PlayerData(hash, sizeNameDirectory, sizeNameFile);
-
-	// 2. Сохранение
+	// 1. Инициализация
+	
+	string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+	string appFolder = Path.Combine(localAppData, "CompanyName", "YourAppName");
+	
+	var data = new PlayerData(
+		hash: ваш_ключ_шифрования,		// byte[] или string
+		basePath: appFolder,			// куда сохранять файлы
+		sizeNameDirectoryHex: 8,      	// 8 символов для папки
+		sizeNameFileHex: 8            	// 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
+	);
+	
+	
+	// 2. Сохранение данных (асинхронно)
+	
 	await data.SaveA(profile, "data/player/profile");
-
-	// 3. Загрузка
-	await data.LoadA<T>(out T profile, "data/player/profile");
-
+	// → сохранит в зашифрованном виде с хэшированными путями
+	
+	// 3. Загрузка данных (асинхронно)
+	
+	ProfileType profile;  // ваш тип класса профиля
+	bool loaded = await data.LoadA<ProfileType>(out profile, "data/player/profile");
+	
+	if (loaded)
+		Console.WriteLine("Профиль успешно загружен!");
+	else
+		Console.WriteLine("Профиль не найден или повреждён");
+	
+	
+	// 4. Отправка/получение по сети
+	
+	byte[] networkData = data.EncryptNetworkData(request);  // → готово к отправке
+	
+	// На стороне получателя:
+	MemoryStream receivedStream = new MemoryStream();  // сюда приходят пакеты
+	
+	// Когда получили кусок данных:
+	byte[] chunk = ...;  // полученный кусок
+	receivedStream.Write(chunk, 0, chunk.Length);
+	
+	// Обрабатываем всё, что накопилось
+	var remains = data.DecryptNetworkData<Request>(
+		receivedStream.ToArray(),
+		req =>
+		{
+			// Здесь ваша логика обработки запроса
+			Console.WriteLine($"Получен запрос: {req.Key}");
+		});
+	
+	// remains — это неполный кусок, который ещё не образовал целое сообщение
+	receivedStream.SetLength(0);  // очищаем поток
+	
+	if (remains.Length > 0)
+	{
+		receivedStream.Write(remains.ToArray(), 0, remains.Length);
+		// теперь при следующем пакете остаток будет учтён
+	}
+	
+	
+	// 5. Логирование действий
+	
+	data.Log += (logEvent) =>
+	{
+		if (logEvent.Level <= DataLogLevel.Info)
+			Console.WriteLine(logEvent.Message);
+	};
 ```
 
 ## Инициализация
 ```csharp
-	new PlayerData(hash, sizeNameDirectory, sizeNameFile)
+	new PlayerData(hash, startPath, sizeNameDirectoryHex, sizeNameFileHex)
 	
 	или
 	
-	void Initialize(string hash) //hash - ключ с которым шифруются данные
-	void Initialize(byte[] hash) //hash - ключ с которым шифруются данные
+	void Initialize(string hash)
+	void Initialize(byte[] hash)
 	
-	void SetSizeNameDirectory(int size); //size - длина символов
-	void SetSizeNameFile(int size); //size - длина символов
+	void SetStartPath(string path);
+	
+	void SetSizeNameDirectoryHex(int size);
+	void SetSizeNameFileHex(int size);
 ```
 
 ## Сохранение данных
@@ -92,6 +151,15 @@
 
 ## Шифрование
 ```csharp
+	public byte[] EncryptNetworkData(object data)
+	public ReadOnlyMemory<byte> DecryptNetworkData<T>(ReadOnlyMemory<byte> data, Action<T> action)
+
+	public static string HashHex(string data, int lengthByte = 32, int offsetByte = 0)
+	public static string HashHex(byte[] data, int lengthByte = 32, int offsetByte = 0)
+	
+	public static byte[] HashRaw(string data)
+	public static byte[] HashRaw(byte[] data)
+	
 	byte[] Encrypt(byte[] plaintext)
 	byte[] Decrypt(byte[] data)
 ```

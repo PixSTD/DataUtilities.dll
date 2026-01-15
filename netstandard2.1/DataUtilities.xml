@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataUtilities</name>
+    </assembly>
+    <members>
+        <member name="M:DataUtilities.PlayerData.#ctor(System.String,System.String,System.Int32,System.Int32,System.Int32)">
+            <param name="hash">Хеш для шифрования/дешифрования данных.</param>
+            <param name="startPath">Начальный путь</param>
+            <param name="sizeNameDirectoryHex">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
+            <param name="sizeNameFileHex">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
+            <param name="offsetByteHash">Смещение(в байтах) начала хеша. Используется для уменьшения коллизий. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.#ctor(System.Byte[],System.String,System.Int32,System.Int32,System.Int32)">
+            <param name="hash">Хеш для шифрования/дешифрования данных.</param>
+            <param name="startPath">Начальный путь</param>
+            <param name="sizeNameDirectoryHex">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
+            <param name="sizeNameFileHex">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
+            <param name="offsetByteHash">Смещение(в байтах) начала хеша. Используется для уменьшения коллизий. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SetHash(System.String)">
+            <param name="hash">Установка хеша для шифрования/дешифрования данных.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SetHash(System.Byte[])">
+            <param name="hash">Установка хеша для шифрования/дешифрования данных.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SetStartPath(System.String)">
+            <param name="path">Установка начального пути.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SetSizeNameDirectoryHex(System.Int32)">
+            <param name="size">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SetSizeNameFileHex(System.Int32)">
+            <param name="size">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SetOffsetHashHex(System.Int32)">
+            <param name="offsetHex">
+            Смещение в hex-хеше (64 символа).
+            Если значение равно -1, смещение автоматически рассчитывается по длине хешируемой строки.
+            </param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.Save(System.Object,System.String,System.String)">
+            <summary>
+            Сохранение данных.
+            </summary>
+            <param name="data">Сохраняемые данные.</param>
+            
+            <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
+            <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.SaveA(System.Object,System.String,System.String)">
+            <summary>
+            Асинхронное сохранение данных.
+            </summary>
+            <param name="data">Сохраняемые данные.</param>
+            
+            <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
+            <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
+        </member>
+        <member name="M:DataUtilities.PlayerData.Load``1(System.Action{``0},System.String,System.String)">
+            <summary>
+            Загрузка данных.
+            </summary>
+            <param name="apply">Полученные данные.</param>
+            
+            <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
+            <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
+            
+            <returns>True, если данные успешно загружены; иначе false.</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.LoadA``1(System.Action{``0},System.String,System.String)">
+            <summary>
+            Асинхронная загрузка данных.
+            </summary>
+            <param name="apply">Полученные данные.</param>
+            
+            <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
+            <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
+            
+            <returns>True, если данные успешно загружены; иначе false.</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.Load``1(``0@,System.String,System.String)">
+            <summary>
+            Загрузка данных.
+            </summary>
+            <param name="value">Полученные данные.</param>
+            
+            <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
+            <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
+            
+            <returns>True, если данные успешно загружены; иначе false.</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.CopyFile(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Копирование файла.
+            </summary>
+            <param name="fromEncryptedPath">Относительный хешируемый путь папки источника (относительно <paramref name="fromUnencryptedPath"/>).</param>
+            <param name="toEncryptedPath">Относительный хешируемый путь папки назначения (относительно <paramref name="toUnencryptedPath"/>).</param>
+            
+            <param name="fromUnencryptedPath">Не хешируемый путь источника. Если пустой, используется стандартный путь.</param>
+            <param name="toUnencryptedPath">Не хешируемый путь назначения. Если пустой, используется стандартный путь.</param>
+            
+            <param name="overwrite">Возможность перезаписать файл, если уже существует.</param>
+            
+            <returns>успешно перенесен файл</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.CopyDirectory(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Копирование папки.
+            </summary>
+            <param name="fromEncryptedPath">Относительный хешируемый путь папки источника (относительно <paramref name="fromUnencryptedPath"/>).</param>
+            <param name="toEncryptedPath">Относительный хешируемый путь папки назначения (относительно <paramref name="toUnencryptedPath"/>).</param>
+            
+            <param name="fromUnencryptedPath">Не хешируемый путь источника. Если пустой, используется стандартный путь.</param>
+            <param name="toUnencryptedPath">Не хешируемый путь назначения. Если пустой, используется стандартный путь.</param>
+            
+            <param name="overwrite">Возможность перезаписать файл, если уже существует.</param>
+            
+            <returns>(copiedFiles: количество успешно скопированных файлов, totalFiles: всего файлов в папке)</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.PrepareHashedPath(System.String@,System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Хеширует путь и проверяет/подготавливает файловую структуру.
+            </summary>
+            <param name="result">Полный хешированный путь. При успехе - путь к файлу, при ошибке - последний успешный сегмент.</param>
+            
+            <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
+            <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
+            
+            <param name="ensureDirectoryExists">Создавать отсутствующие директории.</param>
+            <param name="cleanConflictingFiles">Удалять файлы, мешающие созданию директорий.</param>
+            
+            <returns>Успешность подготовки</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.EncryptNetworkData(System.Object)">
+            <summary>
+            Подготавливает объект к передаче по сети:  
+            </summary>
+            
+            <param name="data">Объект, который нужно передать</param>
+            <returns>Готовый зашифрованный сетевой пакет с маркерами</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.DecryptNetworkData``1(System.ReadOnlyMemory{System.Byte},System.Action{``0})">
+            <summary>
+            Обрабатывает накопленные входящие байты из сети.  
+            Это позволяет корректно работать с фрагментированными пакетами  
+            (когда сообщение разбивается на несколько частей при передаче).
+            </summary>
+            <typeparam name="T">Тип объекта, в который десериализуются сообщения</typeparam>
+            <param name="data">Входящие байты (весь накопленный буфер)</param>
+            <param name="action">Обработчик, который будет вызван для каждого полного расшифрованного сообщения</param>
+            <returns>Остаток данных (неполное сообщение), который нужно сохранить для следующего пакета</returns>
+        </member>
+    </members>
+</doc>
