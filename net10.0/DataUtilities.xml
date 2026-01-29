@@ -4,19 +4,19 @@
         <name>DataUtilities</name>
     </assembly>
     <members>
-        <member name="M:DataUtilities.PlayerData.#ctor(System.String,System.String,System.Int32,System.Int32,System.Int32)">
+        <member name="M:DataUtilities.PlayerData.#ctor(System.String,System.String,DataUtilities.HexLength,DataUtilities.HexLength,System.Int32)">
             <param name="hash">Хеш для шифрования/дешифрования данных.</param>
             <param name="startPath">Начальный путь</param>
-            <param name="sizeNameDirectoryHex">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
-            <param name="sizeNameFileHex">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
-            <param name="offsetByteHash">Смещение(в байтах) начала хеша. Используется для уменьшения коллизий. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента.</param>
+            <param name="lengthNameDirectory">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
+            <param name="lengthNameFile">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
+            <param name="offsetHashHex">Смещение начала хеша. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента.</param>
         </member>
-        <member name="M:DataUtilities.PlayerData.#ctor(System.Byte[],System.String,System.Int32,System.Int32,System.Int32)">
+        <member name="M:DataUtilities.PlayerData.#ctor(System.Byte[],System.String,DataUtilities.HexLength,DataUtilities.HexLength,System.Int32)">
             <param name="hash">Хеш для шифрования/дешифрования данных.</param>
             <param name="startPath">Начальный путь</param>
-            <param name="sizeNameDirectoryHex">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
-            <param name="sizeNameFileHex">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
-            <param name="offsetByteHash">Смещение(в байтах) начала хеша. Используется для уменьшения коллизий. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента.</param>
+            <param name="lengthNameDirectory">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
+            <param name="lengthNameFile">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
+            <param name="offsetHashHex">Смещение начала хеша. Используется для уменьшения коллизий. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента.</param>
         </member>
         <member name="M:DataUtilities.PlayerData.SetHash(System.String)">
             <param name="hash">Установка хеша для шифрования/дешифрования данных.</param>
@@ -27,11 +27,11 @@
         <member name="M:DataUtilities.PlayerData.SetStartPath(System.String)">
             <param name="path">Установка начального пути.</param>
         </member>
-        <member name="M:DataUtilities.PlayerData.SetSizeNameDirectoryHex(System.Int32)">
-            <param name="size">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
+        <member name="M:DataUtilities.PlayerData.SetLengthNameDirectory(DataUtilities.HexLength)">
+            <param name="length">Размер хешированного имени директории при сохранении, пример: 16-символьного имени "86ae2698842cca72".</param>
         </member>
-        <member name="M:DataUtilities.PlayerData.SetSizeNameFileHex(System.Int32)">
-            <param name="size">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
+        <member name="M:DataUtilities.PlayerData.SetLengthNameFile(DataUtilities.HexLength)">
+            <param name="length">Размер хешированного имени файла при сохранении, пример: 16-символьного имени "8a7c8b67fe8bde8b".</param>
         </member>
         <member name="M:DataUtilities.PlayerData.SetOffsetHashHex(System.Int32)">
             <param name="offsetHex">

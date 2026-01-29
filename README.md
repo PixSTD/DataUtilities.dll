@@ -6,7 +6,15 @@
 🐙 Исходный код: https://github.com/PixSTD/DataUtilities.dll  
 📄 Лицензия: MIT
 
-Библиотека для работы с данными.
+**PixSTD.DataUtilities** — продвинутая библиотека для .NET, предоставляющая:
+
+- **🔐 Безопасность** — шифрование и защита данных
+- **🗂️ Хранение** — организация файлов с хешированием путей  
+- **📡 Сетевая подготовка** — упаковка/распаковка данных для сетевой передачи
+- **📦 Производительность** — быстрая сериализация через MessagePack
+- **⚡ Совместимость** — .NET Standard 2.1, 8, 9, 10
+- **🌐 Доступность** — Windows, Linux, Android
+- **📝 Наблюдаемость** — полное логирование операций
 
 ## 🚀 Быстрый старт
 ```csharp
@@ -21,10 +29,11 @@
 	string appFolder = Path.Combine(localAppData, "CompanyName", "YourAppName");
 	
 	var data = new PlayerData(
-		hash: ваш_ключ_шифрования,		// byte[] или string
-		basePath: appFolder,			// куда сохранять файлы
-		sizeNameDirectoryHex: 8,      	// 8 символов для папки
-		sizeNameFileHex: 8            	// 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
+		hash: ваш_ключ_шифрования,				// byte[] или string
+		startPath: appFolder,					// куда сохранять файлы
+		lengthNameDirectory: HexLength.Short, 	// 8 символов для папки
+		lengthNameFile: HexLength.Short,       // 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
+		offsetHashHex: -1					// Смещение начала хеша. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента
 	);
 	
 	
@@ -85,17 +94,19 @@
 
 ## Инициализация
 ```csharp
-	new PlayerData(hash, startPath, sizeNameDirectoryHex, sizeNameFileHex)
+	new PlayerData(hash, string startPath = "", HexLength lengthNameDirectory = HexLength.Long, HexLength lengthNameFile = HexLength.Full, int offsetHashHex = 0)
 	
 	или
 	
-	void Initialize(string hash)
-	void Initialize(byte[] hash)
+	void SetHash(string hash)
+	void SetHash(byte[] hash)
 	
 	void SetStartPath(string path);
 	
-	void SetSizeNameDirectoryHex(int size);
-	void SetSizeNameFileHex(int size);
+	void SetLengthNameDirectory(int length);
+	void SetLengthNameFile(int length);
+	
+	void SetOffsetHashHex(int offsetHex);
 ```
 
 ## Сохранение данных
@@ -108,7 +119,7 @@
 ```csharp
 	bool Load<T>(Action<T> apply, string encryptedPath, string unencryptedPath = "")
 	Task<bool> LoadA<T>(Action<T> apply, string encryptedPath, string unencryptedPath = "")
-	bool LoadA<T>(out T value, string encryptedPath, string unencryptedPath = "")
+	bool Load<T>(out T value, string encryptedPath, string unencryptedPath = "")
 ```
 
 ## копирование данных
@@ -135,7 +146,7 @@
 
 ## Утилиты путей
 ```csharp
-	string GetRightPath(string path)
+	string NormalizePath(string path)
 	string GetNameFile(string path)
 	string GetNameDirectory(string path)
 	string GetPathToDirectory(string path)
@@ -154,8 +165,8 @@
 	public byte[] EncryptNetworkData(object data)
 	public ReadOnlyMemory<byte> DecryptNetworkData<T>(ReadOnlyMemory<byte> data, Action<T> action)
 
-	public static string HashHex(string data, int lengthByte = 32, int offsetByte = 0)
-	public static string HashHex(byte[] data, int lengthByte = 32, int offsetByte = 0)
+	public static string HashHex(string data, HexLength length = HexLength.Full, int offsetChars = 0)
+	public static string HashHex(byte[] data, HexLength length = HexLength.Full, int offsetChars = 0)
 	
 	public static byte[] HashRaw(string data)
 	public static byte[] HashRaw(byte[] data)
