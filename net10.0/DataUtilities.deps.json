@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "DataUtilities/0.1.4": {
+      "DataUtilities/0.1.7": {
         "dependencies": {
           "MessagePack": "3.1.4"
         },
@@ -45,7 +45,7 @@
     }
   },
   "libraries": {
-    "DataUtilities/0.1.4": {
+    "DataUtilities/0.1.7": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
