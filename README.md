@@ -9,7 +9,7 @@
 **PixSTD.DataUtilities** — продвинутая библиотека для .NET, предоставляющая:
 
 - **🔐 Безопасность** — шифрование и защита данных
-- **🗂️ Хранение** — организация файлов с хэшированием путей  
+- **🗂️ Хранение** — организация файлов с хешированием путей  
 - **📡 Сетевая подготовка** — упаковка/распаковка данных для сетевой передачи
 - **📦 Производительность** — быстрая сериализация через MessagePack
 - **⚡ Совместимость** — .NET Standard 2.1, 8, 9, 10
@@ -32,9 +32,10 @@
 - [📁 Копирование файлов и папок](#-копирование-файлов-и-папок)
   - [📄 Копирование файлов](#-копирование-файлов)
   - [📂 Копирование папок (рекурсивное)](#-копирование-папок-рекурсивное)
-  - [🎯 Пример использования](#-пример-использования-1)
-  - [🔍 Поиск файлов и папок](#-поиск-файлов-и-папок)
-  - [🗑️ Удаление файлов и папок](#-удаление-файлов-и-папок)
+  - [🎯 Пример использования](#-пример-использования)
+- [📄 Перенос файлов и папок](#-перенос-файлов-и-папок)
+- [🔍 Поиск файлов и папок](#-поиск-файлов-и-папок)
+- [🗑️ Удаление файлов и папок](#-удаление-файлов-и-папок)
 - [🛠️ Вспомогательные функции](#-вспомогательные-функции)
   - [📂 Работа с путями](#-работа-с-путями)
   - [🔄 Конвертация объектов](#-конвертация-объектов)
@@ -62,14 +63,14 @@
 		startPath: appFolder,					// куда сохранять файлы
 		lengthNameDirectory: HexLength.Short, 	// 8 символов для папки
 		lengthNameFile: HexLength.Short,       	// 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
-		offsetHashHex: -1						// Смещение начала хэша. Значение -1 означает автоматический сдвиг, равный длине хэшируемого сегмента
+		offsetHashHex: -1						// Смещение начала хеша. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента
 	);
 	
 	
 	// 2. Сохранение данных (асинхронно)
 	
 	await data.SaveA(profile, "data/player/profile");
-	// → сохранит в зашифрованном виде с хэшированными путями
+	// → сохранит в зашифрованном виде с хешированными путями
 	
 	// 3. Загрузка данных (асинхронно)
 	
@@ -136,9 +137,9 @@ var storage = new PlayerData("мой-секретный-ключ");
 var storage = new PlayerData(
     hash: "мой-секретный-ключ",
     startPath: "C:/MyApp/Data",           // Куда сохранять файлы
-    lengthNameDirectory: HexLength.Medium, // Длина хэша для папок (16 символов)
-    lengthNameFile: HexLength.Short,      // Длина хэша для файлов (8 символов)
-    offsetHashHex: -1                     // Автосмещение для уникальности хэшей
+    lengthNameDirectory: HexLength.Medium, // Длина хеша для папок (16 символов)
+    lengthNameFile: HexLength.Short,      // Длина хеша для файлов (8 символов)
+    offsetHashHex: -1                     // Автосмещение для уникальности хешей
 );
 ```
 
@@ -189,7 +190,7 @@ storage.SetStartPath(FileSystem.AppDataDirectory);
 #### `SetLengthNameDirectory(HexLength length)`  
 
 #### `SetLengthNameFile(HexLength length)`
-Настраивают длину хэшированных имён.
+Настраивают длину хешированных имён.
 
 ```csharp
 // Возможные значения HexLength:
@@ -205,18 +206,18 @@ storage.SetLengthNameFile(HexLength.Medium);
 ```
 
 #### `SetOffsetHashHex(int offsetHex)`
-Смещение в хэше для уменьшения коллизий.
+Смещение в хеше для уменьшения коллизий.
 
 ```csharp
 // Фиксированное смещение
-storage.SetOffsetHashHex(10); // Начинать хэш с 10-го символа
+storage.SetOffsetHashHex(10); // Начинать хеш с 10-го символа
 
 // Автоматическое смещение (рекомендуется)
-storage.SetOffsetHashHex(-1); // Смещение = длина хэшируемой строки
+storage.SetOffsetHashHex(-1); // Смещение = длина хешируемой строки
 
 // Пример с offsetHashHex = -1:
-// "users" (5 символов) → хэш начиная с 5-й позиции
-// "profile" (7 символов) → хэш начиная с 7-й позиции
+// "users" (5 символов) → хеш начиная с 5-й позиции
+// "profile" (7 символов) → хеш начиная с 7-й позиции
 ```
 
 ### 🎯 Примеры использования
@@ -269,7 +270,7 @@ storage.SetOffsetHashHex(-1);
    - Можно использовать относительные пути
 
 3. **Безопасность**:
-   - Разные длины хэшей для папок и файлов усложняют анализ структуры
+   - Разные длины хешей для папок и файлов усложняют анализ структуры
    - Смещение (`offsetHashHex`) предотвращает pattern analysis
 
 ## 💾 Сохранение и загрузка данных
@@ -294,8 +295,8 @@ await storage.SaveA(settings, "app/settings");
 // С сохранением в конкретную папку
 await storage.SaveA(
     data: user,
-    encryptedPath: "profile",           // хэшируется: "profile" → "e5f6a1b2c3d47890"
-    unencryptedPath: "C:/backups/users" // Не хэшируется, используется как есть
+    encryptedPath: "profile",           // хешируется: "profile" → "e5f6a1b2c3d47890"
+    unencryptedPath: "C:/backups/users" // Не хешируется, используется как есть
 );
 ```
 
@@ -522,9 +523,79 @@ public class BackupService
 }
 ```
 
-### 🔍 Поиск файлов и папок
+## 📄 Перенос файлов и папок
 
-#### `SearchFile(string encryptedPath, ...)` / `SearchDirectory(...)`
+### `MoveFile(string fromEncryptedPath, string toEncryptedPath, ...)`
+Перемещает один файл в новое место.  
+Поддерживает перезапись (`overwrite = true` по умолчанию).
+
+**Возвращает:**  
+`true` — файл успешно перемещён  
+`false` — не удалось (путь не найден, уже существует без `overwrite`, конфликт и т.д.)
+
+```csharp
+// Простое перемещение с перезаписью
+storage.MoveFile(
+    fromEncryptedPath: "users/ivan/profile",
+    toEncryptedPath: "users/ivan/profile_old"
+);
+
+// Без перезаписи (если файл существует — вернёт false)
+storage.MoveFile(
+    fromEncryptedPath: "config/settings",
+    toEncryptedPath: "config/settings_backup",
+    overwrite: false
+);
+
+// Между разными корневыми папками
+storage.MoveFile(
+    fromEncryptedPath: "report.pdf",
+    toEncryptedPath: "report_2026.pdf",
+    fromUnencryptedPath: "C:/reports",
+    toUnencryptedPath: "D:/archive",
+    overwrite: true
+);
+```
+
+### `MoveDirectory(string fromEncryptedPath, string toEncryptedPath, ...)`
+Перемещает папку со всем содержимым (рекурсивно).  
+Поддерживает перезапись (`overwrite = true` по умолчанию).
+
+**Важно о перемещении:**
+- Если цель уже существует и `overwrite = false` — метод вернёт `false` и **ничего не сделает**.
+- При `overwrite = true` существующий файл/папка будет удалён перед перемещением (через `DeleteFile`/`DeleteDirectory`).
+
+**Возвращает:**  
+`true` — папка успешно перемещена  
+`false` — не удалось (путь не найден, уже существует без `overwrite`, нет прав и т.д.)
+
+```csharp
+// Перемещение всей папки
+storage.MoveDirectory(
+    fromEncryptedPath: "users/ivan",
+    toEncryptedPath: "archive/users/ivan_2026"
+);
+
+// Без перезаписи
+storage.MoveDirectory(
+    fromEncryptedPath: "app/logs",
+    toEncryptedPath: "archive/logs_january",
+    overwrite: false
+);
+
+// Между разными дисками
+storage.MoveDirectory(
+    fromEncryptedPath: "project_x/data",
+    toEncryptedPath: "backup/project_x_data",
+    fromUnencryptedPath: "C:/projects",
+    toUnencryptedPath: "D:/backups",
+    overwrite: true
+);
+```
+
+## 🔍 Поиск файлов и папок
+
+### `SearchFile(string encryptedPath, ...)` / `SearchDirectory(...)`
 Проверяет существование файла или папки.
 
 ```csharp
@@ -548,7 +619,7 @@ var exists = storage.SearchFile(
 );
 ```
 
-#### `GetFiles(string encryptedPath, ...)` / `GetDirectories(...)`
+### `GetFiles(string encryptedPath, ...)` / `GetDirectories(...)`
 Получает список файлов или папок.
 
 ```csharp
@@ -572,7 +643,7 @@ var imageFiles = storage.GetFiles("gallery")
     .Where(f => f.EndsWith(".jpg") || f.EndsWith(".png"));
 ```
 
-#### `QuantityFiles(...)` / `QuantityDirectories(...)`
+### `QuantityFiles(...)` / `QuantityDirectories(...)`
 Подсчитывает количество файлов или папок.
 
 ```csharp
@@ -595,17 +666,21 @@ public StorageInfo GetStorageInfo()
 }
 ```
 
-### 🗑️ Удаление файлов и папок
+## 🗑️ Удаление файлов и папок
 
-#### `DeleteFile(string encryptedPath, ...)` / `DeleteDirectory(...)`
+### `DeleteFile(string encryptedPath, ...)` / `DeleteDirectory(...)`
 Удаляет файлы и папки (рекурсивно).
+
+**Возвращает:**  
+`true` — файл/папка успешно удалены **или** уже не существовали  
+`false` — не удалось удалить (нет прав, файл заблокирован, путь некорректен и т.д.)
 
 ```csharp
 // Удаление одного файла
-storage.DeleteFile("temp/cache_data");
+Console.WriteLine(storage.DeleteFile("temp/cache_data") ? "Файл удален" : "Не удалось удалить файл");
 
 // Удаление папки со всем содержимым
-storage.DeleteDirectory("old_backups");
+Console.WriteLine(storage.DeleteDirectory("old_backups") ? "Папка удалена" : "Не удалось удалить папку");
 
 // Очистка временных файлов
 public void CleanupTempFiles()
@@ -616,7 +691,7 @@ public void CleanupTempFiles()
         // Удаляем только старые файлы
         if (IsFileOlderThan(file, TimeSpan.FromDays(7)))
         {
-            storage.DeleteFile("", file);
+            Console.WriteLine(storage.DeleteFile("", file) ? "Файл удален" : "Не удалось удалить файл");
         }
     }
 }
@@ -699,6 +774,46 @@ var shortPath2 = PlayerData.GetCutPath("users/ivan/documents/contract.pdf", 1);
 
 var shortPath3 = PlayerData.GetCutPath("folder1/folder2/folder3/", 3);
 // → "folder1/folder2/folder3/"
+```
+
+#### `PrepareHashedPath(out string result, string encryptedPath, string unencryptedPath = "", params PathMode[] modes)`
+Метод подготавливает полный физический путь: хеширует сегменты `encryptedPath` и создаёт/проверяет структуру папок по заданным режимам.
+
+**Важно о последнем сегменте пути:**
+- Если `encryptedPath` указывает на **папку** — **рекомендуется** заканчивать его слешем `/` (например, `"users/ivan/documents/"`).  
+  Это явно говорит методу, что последний сегмент — директория, и он может создать её (при `EnsureDirectoryExists`).
+- Если слеш в конце **отсутствует** — метод считает последний сегмент **файлом** и **не создаёт** директорию с таким именем (даже при `EnsureDirectoryExists`).
+
+- Папки и файлы используют **разные длины хэша** (`LengthNameDirectory` и `LengthNameFile`).  
+  Поэтому важно, чтобы метод правильно понял тип последнего сегмента: слеш `/` → папка (длина `LengthNameDirectory`), без слеша → файл (длина `LengthNameFile`).
+
+- Это сделано потому, что на этапе подготовки пути **ещё не существует** на диске, и не возможно автоматически определить тип последнего сегмента (файл или папка).
+
+**Параметры modes:**
+- `EnsureDirectoryExists` — создавать отсутствующие папки
+- `CleanConflictingFiles` — удалять файлы, мешающие созданию папок
+- `SkipMissingDirectories` — не останавливаться и не выбрасывать ошибку, если какая-то промежуточная директория отсутствует
+
+```csharp
+string physicalPath;
+bool success = storage.PrepareHashedPath(
+    out physicalPath,
+    encryptedPath: "users/ivan/documents",
+    unencryptedPath: "C:/myapp/data",
+    PathMode.EnsureDirectoryExists,
+    PathMode.CleanConflictingFiles
+);
+
+if (success)
+{
+    Console.WriteLine($"Подготовлен путь: {physicalPath}");
+    // теперь можно работать напрямую с physicalPath
+}
+else
+{
+    Console.WriteLine($"Подготовка прервана. Последний успешный путь: {physicalPath}");
+    // Здесь можно проверить, где именно остановилось создание
+}
 ```
 
 ### 🔄 Конвертация объектов

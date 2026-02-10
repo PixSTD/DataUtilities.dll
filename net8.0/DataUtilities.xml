@@ -102,7 +102,7 @@
             
             <param name="overwrite">Возможность перезаписать файл, если уже существует.</param>
             
-            <returns>успешно перенесен файл</returns>
+            <returns>успешно скопирован файл</returns>
         </member>
         <member name="M:DataUtilities.PlayerData.CopyDirectory(System.String,System.String,System.String,System.String,System.Boolean)">
             <summary>
@@ -114,11 +114,39 @@
             <param name="fromUnencryptedPath">Не хешируемый путь источника. Если пустой, используется стандартный путь.</param>
             <param name="toUnencryptedPath">Не хешируемый путь назначения. Если пустой, используется стандартный путь.</param>
             
-            <param name="overwrite">Возможность перезаписать файл, если уже существует.</param>
+            <param name="overwrite">Возможность перезаписать файлы, если уже существуют в папке.</param>
             
             <returns>(copiedFiles: количество успешно скопированных файлов, totalFiles: всего файлов в папке)</returns>
         </member>
-        <member name="M:DataUtilities.PlayerData.PrepareHashedPath(System.String@,System.String,System.String,System.Boolean,System.Boolean)">
+        <member name="M:DataUtilities.PlayerData.MoveFile(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Перенос файла.
+            </summary>
+            <param name="fromEncryptedPath">Относительный хешируемый путь папки источника (относительно <paramref name="fromUnencryptedPath"/>).</param>
+            <param name="toEncryptedPath">Относительный хешируемый путь папки назначения (относительно <paramref name="toUnencryptedPath"/>).</param>
+            
+            <param name="fromUnencryptedPath">Не хешируемый путь источника. Если пустой, используется стандартный путь.</param>
+            <param name="toUnencryptedPath">Не хешируемый путь назначения. Если пустой, используется стандартный путь.</param>
+            
+            <param name="overwrite">Возможность перезаписать файл, если уже существует.</param>
+            
+            <returns>успешно перенесен файл</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.MoveDirectory(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Перенос папки.
+            </summary>
+            <param name="fromEncryptedPath">Относительный хешируемый путь папки источника (относительно <paramref name="fromUnencryptedPath"/>).</param>
+            <param name="toEncryptedPath">Относительный хешируемый путь папки назначения (относительно <paramref name="toUnencryptedPath"/>).</param>
+            
+            <param name="fromUnencryptedPath">Не хешируемый путь источника. Если пустой, используется стандартный путь.</param>
+            <param name="toUnencryptedPath">Не хешируемый путь назначения. Если пустой, используется стандартный путь.</param>
+            
+            <param name="overwrite">Возможность перезаписать файлы, если уже существуют в папке.</param>
+            
+            <returns>успешно перенесена папка</returns>
+        </member>
+        <member name="M:DataUtilities.PlayerData.PrepareHashedPath(System.String@,System.String,System.String,DataUtilities.PathMode[])">
             <summary>
             Хеширует путь и проверяет/подготавливает файловую структуру.
             </summary>
@@ -127,8 +155,7 @@
             <param name="encryptedPath">Относительный хешируемый путь (относительно <paramref name="unencryptedPath"/>).</param>
             <param name="unencryptedPath">Не хешируемый путь. Если пустой, используется стандартный путь.</param>
             
-            <param name="ensureDirectoryExists">Создавать отсутствующие директории.</param>
-            <param name="cleanConflictingFiles">Удалять файлы, мешающие созданию директорий.</param>
+            <param name="modes">Настройки для создания пути.</param>
             
             <returns>Успешность подготовки</returns>
         </member>
