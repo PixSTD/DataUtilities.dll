@@ -48,78 +48,78 @@
 
 ## 🚀 Быстрый старт
 ```csharp
-	using DataUtilities;
-	using System;
-	using System.IO;
-	using System.Threading.Tasks;
+using DataUtilities;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-	// 1. Инициализация
-	
-	string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-	string appFolder = Path.Combine(localAppData, "CompanyName", "YourAppName");
-	
-	var data = new PlayerData(
-		hash: "ваш_ключ_шифрования",			// byte[] или string
-		startPath: appFolder,					// куда сохранять файлы
-		lengthNameDirectory: HexLength.Short, 	// 8 символов для папки
-		lengthNameFile: HexLength.Short,       	// 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
-		offsetHashHex: -1						// Смещение начала хеша. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента
-	);
-	
-	
-	// 2. Сохранение данных (асинхронно)
-	
-	await data.SaveA(profile, "data/player/profile");
-	// → сохранит в зашифрованном виде с хешированными путями
-	
-	// 3. Загрузка данных (асинхронно)
-	
-	ProfileType profile;  // ваш тип класса профиля
-	bool loaded = await data.LoadA<ProfileType>(out profile, "data/player/profile");
-	
-	if (loaded)
-		Console.WriteLine("Профиль успешно загружен!");
-	else
-		Console.WriteLine("Профиль не найден или повреждён");
-	
-	
-	// 4. Отправка/получение по сети
-	
-	byte[] networkData = data.EncryptNetworkData(request);  // → готово к отправке
-	
-	// На стороне получателя:
-	MemoryStream receivedStream = new MemoryStream();  // сюда приходят пакеты
-	
-	// Когда получили кусок данных:
-	byte[] chunk = ...;  // полученный кусок
-	receivedStream.Write(chunk, 0, chunk.Length);
-	
-	// Обрабатываем всё, что накопилось
-	var remains = data.DecryptNetworkData<Request>(
-		receivedStream.ToArray(),
-		req =>
-		{
-			// Здесь ваша логика обработки запроса
-			Console.WriteLine($"Получен запрос: {req.Key}");
-		});
-	
-	// remains — это неполный кусок, который ещё не образовал целое сообщение
-	receivedStream.SetLength(0);  // очищаем поток
-	
-	if (remains.Length > 0)
+// 1. Инициализация
+
+string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+string appFolder = Path.Combine(localAppData, "CompanyName", "YourAppName");
+
+var data = new PlayerData(
+	hash: "ваш_ключ_шифрования",			// byte[] или string
+	startPath: appFolder,					// куда сохранять файлы
+	lengthNameDirectory: HexLength.Short,	// 8 символов для папки
+	lengthNameFile: HexLength.Short,		// 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
+	offsetHashHex: -1						// Смещение начала хеша. Значение -1 означает автоматический сдвиг, равный длине хешируемого сегмента
+);
+
+
+// 2. Сохранение данных (асинхронно)
+
+await data.SaveA(profile, "data/player/profile");
+// → сохранит в зашифрованном виде с хешированными путями
+
+// 3. Загрузка данных (асинхронно)
+
+ProfileType profile;  // ваш тип класса профиля
+bool loaded = await data.LoadA<ProfileType>(out profile, "data/player/profile");
+
+if (loaded)
+	Console.WriteLine("Профиль успешно загружен!");
+else
+	Console.WriteLine("Профиль не найден или повреждён");
+
+
+// 4. Отправка/получение по сети
+
+byte[] networkData = data.EncryptNetworkData(request);  // → готово к отправке
+
+// На стороне получателя:
+MemoryStream receivedStream = new MemoryStream();  // сюда приходят пакеты
+
+// Когда получили кусок данных:
+byte[] chunk = ...;  // полученный кусок
+receivedStream.Write(chunk, 0, chunk.Length);
+
+// Обрабатываем всё, что накопилось
+var remains = data.DecryptNetworkData<Request>(
+	receivedStream.ToArray(),
+	req =>
 	{
-		receivedStream.Write(remains.ToArray(), 0, remains.Length);
-		// теперь при следующем пакете остаток будет учтён
-	}
-	
-	
-	// 5. Логирование действий
-	
-	data.Log += (logEvent) =>
-	{
-		if (logEvent.Level <= DataLogLevel.Info)
-			Console.WriteLine(logEvent.Message);
-	};
+		// Здесь ваша логика обработки запроса
+		Console.WriteLine($"Получен запрос: {req.Key}");
+	});
+
+// remains — это неполный кусок, который ещё не образовал целое сообщение
+receivedStream.SetLength(0);  // очищаем поток
+
+if (remains.Length > 0)
+{
+	receivedStream.Write(remains.ToArray(), 0, remains.Length);
+	// теперь при следующем пакете остаток будет учтён
+}
+
+
+// 5. Логирование действий
+
+data.Log += (logEvent) =>
+{
+	if (logEvent.Level <= DataLogLevel.Info)
+		Console.WriteLine(logEvent.Message);
+};
 ```
 
 ## 📖 Инициализация

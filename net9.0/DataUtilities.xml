@@ -179,5 +179,11 @@
             <param name="action">Обработчик, который будет вызван для каждого полного расшифрованного сообщения</param>
             <returns>Остаток данных (неполное сообщение), который нужно сохранить для следующего пакета</returns>
         </member>
+        <member name="T:MessagePack.GeneratedMessagePackResolver">
+            <summary>A MessagePack resolver that uses generated formatters for types in this assembly.</summary>
+        </member>
+        <member name="F:MessagePack.GeneratedMessagePackResolver.Instance">
+            <summary>An instance of this resolver that only returns formatters specifically generated for types in this assembly.</summary>
+        </member>
     </members>
 </doc>
