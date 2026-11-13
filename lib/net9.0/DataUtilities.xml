@@ -4,6 +4,9 @@
         <name>DataUtilities</name>
     </assembly>
     <members>
+        <member name="P:DataUtilities.PlayerData.FileSystemSupported">
+            <summary>Regular filesystem APIs are unavailable in browser-wasm.</summary>
+        </member>
         <member name="M:DataUtilities.PlayerData.#ctor(System.String,System.String,DataUtilities.HexLength,DataUtilities.HexLength,System.Int32)">
             <param name="hash">Хеш для шифрования/дешифрования данных.</param>
             <param name="startPath">Начальный путь</param>

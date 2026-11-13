@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'browser-wasm'">
+    <WasmBuildNative>true</WasmBuildNative>
+    <_DataUtilitiesBrowserNative>$(MSBuildThisFileDirectory)../runtimes/browser-wasm/native/NativeCrypto.a</_DataUtilitiesBrowserNative>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'browser-wasm'">
+    <NativeFileReference Include="$(_DataUtilitiesBrowserNative)" />
+  </ItemGroup>
+  <Target Name="CheckDataUtilitiesBrowserNative"
+          BeforeTargets="PrepareForBuild"
+          Condition="'$(RuntimeIdentifier)' == 'browser-wasm'">
+    <Error Condition="!Exists('$(_DataUtilitiesBrowserNative)')"
+           Text="PixSTD.DataUtilities browser native asset is missing. Restore the complete NuGet package." />
+  </Target>
+</Project>

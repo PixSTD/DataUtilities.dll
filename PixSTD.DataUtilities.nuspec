@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>PixSTD.DataUtilities</id>
+    <version>0.1.13</version>
+    <authors>PixSTD</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/PixSTD/DataUtilities.dll</projectUrl>
+    <description>Library for data operations and serialization</description>
+    <tags>data serialization utilities storage</tags>
+    <repository type="git" url="https://github.com/PixSTD/DataUtilities.dll.git" commit="41c1b002372715a70ff83e766784f625ab91ad4f" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="MessagePack" version="3.1.12" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net8.0">
+        <dependency id="MessagePack" version="3.1.12" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0">
+        <dependency id="MessagePack" version="3.1.12" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="MessagePack" version="3.1.12" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

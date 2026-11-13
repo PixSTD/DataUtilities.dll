@@ -13,12 +13,17 @@
 - **📡 Сетевая подготовка** — упаковка/распаковка данных для сетевой передачи
 - **📦 Производительность** — быстрая сериализация через MessagePack
 - **⚡ Совместимость** — .NET Standard 2.1, 8, 9, 10
-- **🌐 Доступность** — Windows, Linux, Android
+- **🌐 Доступность** — Windows, Linux, Android и браузер (WebAssembly)
 - **📝 Наблюдаемость** — полное логирование операций
 
 ## 📑 Оглавление
 
+- [📦 Подключение библиотеки](#-подключение-библиотеки)
+  - [C# / .NET](#c--net)
+  - [.NET WebAssembly](#net-webassembly)
+  - [HTML / JavaScript](#html--javascript)
 - [🚀 Быстрый старт](#-быстрый-старт)
+- [🌐 Пример для браузера](#-пример-для-браузера)
 - [📖 Инициализация](#-инициализация)
   - [🔧 Конструкторы](#-конструкторы)
   - [⚙️ Методы настройки](#-методы-настройки-можно-вызывать-после-создания)
@@ -45,8 +50,68 @@
 - [📝 Логирование и обработка событий](#-логирование-и-обработка-событий)
   - [🎯 Система логирования](#-система-логирования)
   - [🔔 Событие Log](#-событие-log)
+- [🖥️ Готовые сборки](#-готовые-сборки)
+
+## 📦 Подключение библиотеки
+
+### C# / .NET
+
+Библиотека подключается к проекту C# через NuGet. Этот способ используется
+для Windows, Linux, Android и .NET WebAssembly.
+
+Подключение через NuGet:
+
+```shell
+dotnet add package PixSTD.DataUtilities --version 0.1.13
+```
+
+Пакет также доступен в менеджере пакетов NuGet под именем `PixSTD.DataUtilities`.
+Пространство имён библиотеки:
+
+```csharp
+using DataUtilities;
+```
+
+Поддерживаемые платформы и архитектуры перечислены [в конце README](#-готовые-сборки).
+
+### .NET WebAssembly
+
+Браузерное приложение использует тот же NuGet-пакет.
+Для сборки используются .NET 10 SDK и инструменты `wasm-tools`:
+
+```shell
+dotnet workload install wasm-tools
+```
+
+Дополнительные настройки проекта .NET WebAssembly (`.csproj`):
+
+```xml
+<PropertyGroup>
+  <TargetFramework>net10.0</TargetFramework>
+  <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+  <PublishTrimmed>false</PublishTrimmed>
+</PropertyGroup>
+```
+
+Пример работы с данными — в разделе [«Пример для браузера»](#-пример-для-браузера).
+
+### HTML / JavaScript
+
+HTML-страница использует библиотеку через приложение .NET WebAssembly.
+Пакет NuGet подключается к его C#-проекту, а методы библиотеки вызываются
+из JavaScript через экспортированные функции C#.
+
+Методы для вызова из JavaScript помечаются атрибутом `[JSExport]`.
+JavaScript загружает среду .NET через `dotnet.js` и получает экспортированные
+методы с помощью `getAssemblyExports`.
+
+Схема вызова: **HTML → JavaScript → C# в WebAssembly → DataUtilities**.
 
 ## 🚀 Быстрый старт
+
+Пример с сохранением файлов для Windows, Linux и Android.
+Работа с данными в памяти показана в разделе [«Пример для браузера»](#-пример-для-браузера).
+
 ```csharp
 using DataUtilities;
 using System;
@@ -59,7 +124,7 @@ string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalA
 string appFolder = Path.Combine(localAppData, "CompanyName", "YourAppName");
 
 var data = new PlayerData(
-	hash: "ваш_ключ_шифрования",			// byte[] или string
+	hash: "ключ_шифрования",			// byte[] или string
 	startPath: appFolder,					// куда сохранять файлы
 	lengthNameDirectory: HexLength.Short,	// 8 символов для папки
 	lengthNameFile: HexLength.Short,		// 8 символов для файла (Пример: "player/profile" → "a1b2c3d4/e5f67890")
@@ -74,12 +139,11 @@ await data.SaveA(profile, "data/player/profile");
 
 // 3. Загрузка данных (асинхронно)
 
-ProfileType profile;  // ваш тип класса профиля
-bool loaded = await data.LoadA<ProfileType>(out profile, "data/player/profile");
+bool loaded = await data.LoadA<ProfileType>(
+	profile => Console.WriteLine("Профиль успешно загружен!"),
+	"data/player/profile");
 
-if (loaded)
-	Console.WriteLine("Профиль успешно загружен!");
-else
+if (!loaded)
 	Console.WriteLine("Профиль не найден или повреждён");
 
 
@@ -99,7 +163,7 @@ var remains = data.DecryptNetworkData<Request>(
 	receivedStream.ToArray(),
 	req =>
 	{
-		// Здесь ваша логика обработки запроса
+		// Обработка полученного запроса
 		Console.WriteLine($"Получен запрос: {req.Key}");
 	});
 
@@ -122,12 +186,31 @@ data.Log += (logEvent) =>
 };
 ```
 
+## 🌐 Пример для браузера
+
+Сериализация, шифрование, расшифровка и хеширование строки в .NET WebAssembly:
+
+```csharp
+using DataUtilities;
+
+// Путь не задаём: пример работает только с данными в памяти.
+var data = new PlayerData("ключ-для-демонстрации");
+byte[] packed = PlayerData.Convert("Привет из браузера!");
+byte[] encrypted = data.Encrypt(packed);
+string restored = PlayerData.Convert<string>(data.Decrypt(encrypted));
+string hash = PlayerData.HashHex(packed);
+// restored == "Привет из браузера!"
+// PlayerData.FileSystemSupported == false
+```
+
 ## 📖 Инициализация
 
 ### 🔧 Конструкторы
 
 #### `PlayerData(string hash, ...)`
 Создаёт экземпляр с строковым ключом шифрования.
+
+**В браузере:** `startPath` — пустая строка; данные обрабатываются в памяти.
 
 ```csharp
 // Простейший вариант
@@ -145,6 +228,8 @@ var storage = new PlayerData(
 
 #### `PlayerData(byte[] hash, ...)`
 То же самое, но с байтовым ключом (более безопасно).
+
+**В браузере:** `startPath` — пустая строка.
 
 ```csharp
 // Генерация ключа из байтов
@@ -173,6 +258,9 @@ storage.SetHash(secureHash);
 #### `SetStartPath(string path)`
 Задаёт корневую папку для хранения данных.
 
+Файловое хранение работает в Windows, Linux и Android.
+Для работы с данными в памяти используется пустой путь `""`.
+
 ```csharp
 // Для desktop-приложений
 storage.SetStartPath(Path.Combine(
@@ -185,6 +273,17 @@ storage.SetStartPath(Path.Combine(
 storage.SetStartPath(FileSystem.AppDataDirectory);
 
 // Проверка: путь будет создан, если не существует
+```
+
+#### `FileSystemSupported`
+
+Возвращает признак поддержки файловых операций текущей платформой.
+
+```csharp
+if (PlayerData.FileSystemSupported)
+{
+    // Можно использовать Save, Load и другие файловые методы.
+}
 ```
 
 #### `SetLengthNameDirectory(HexLength length)`  
@@ -262,7 +361,6 @@ storage.SetOffsetHashHex(-1);
 
 1. **Ключ шифрования**:
    - Байтовый ключ: Минимум 16 байт
-   - Храните безопасно (не в коде!)
    - При утере ключа данные не восстановить
 
 2. **Пути**:
@@ -274,6 +372,8 @@ storage.SetOffsetHashHex(-1);
    - Смещение (`offsetHashHex`) предотвращает pattern analysis
 
 ## 💾 Сохранение и загрузка данных
+
+**Платформы:** Windows, Linux, Android.
 
 ### 📤 Сохранение объектов
 
@@ -418,9 +518,12 @@ public class UserService
 
 ## 📁 Копирование файлов и папок
 
+**Платформы:** Windows, Linux, Android.
+
 ### 📄 Копирование файлов
 
 #### `CopyFile(string fromEncryptedPath, string toEncryptedPath, ...)`
+
 Копирует один файл в другое место.
 
 ```csharp
@@ -450,6 +553,7 @@ storage.CopyFile(
 ### 📂 Копирование папок (рекурсивное)
 
 #### `CopyDirectory(string fromEncryptedPath, string toEncryptedPath, ...)`
+
 Копирует все файлы из одной папки в другую.
 
 ```csharp
@@ -525,7 +629,10 @@ public class BackupService
 
 ## 📄 Перенос файлов и папок
 
+**Платформы:** Windows, Linux, Android.
+
 ### `MoveFile(string fromEncryptedPath, string toEncryptedPath, ...)`
+
 Перемещает один файл в новое место.  
 Поддерживает перезапись (`overwrite = true` по умолчанию).
 
@@ -558,6 +665,7 @@ storage.MoveFile(
 ```
 
 ### `MoveDirectory(string fromEncryptedPath, string toEncryptedPath, ...)`
+
 Перемещает папку со всем содержимым (рекурсивно).  
 Поддерживает перезапись (`overwrite = true` по умолчанию).
 
@@ -595,7 +703,10 @@ storage.MoveDirectory(
 
 ## 🔍 Поиск файлов и папок
 
+**Платформы:** Windows, Linux, Android.
+
 ### `SearchFile(string encryptedPath, ...)` / `SearchDirectory(...)`
+
 Проверяет существование файла или папки.
 
 ```csharp
@@ -620,6 +731,7 @@ var exists = storage.SearchFile(
 ```
 
 ### `GetFiles(string encryptedPath, ...)` / `GetDirectories(...)`
+
 Получает список файлов или папок.
 
 ```csharp
@@ -644,6 +756,7 @@ var imageFiles = storage.GetFiles("gallery")
 ```
 
 ### `QuantityFiles(...)` / `QuantityDirectories(...)`
+
 Подсчитывает количество файлов или папок.
 
 ```csharp
@@ -668,7 +781,10 @@ public StorageInfo GetStorageInfo()
 
 ## 🗑️ Удаление файлов и папок
 
+**Платформы:** Windows, Linux, Android.
+
 ### `DeleteFile(string encryptedPath, ...)` / `DeleteDirectory(...)`
+
 Удаляет файлы и папки (рекурсивно).
 
 **Возвращает:**  
@@ -777,6 +893,9 @@ var shortPath3 = PlayerData.GetCutPath("folder1/folder2/folder3/", 3);
 ```
 
 #### `PrepareHashedPath(out string result, string encryptedPath, string unencryptedPath = "", params PathMode[] modes)`
+
+**Платформы:** Windows, Linux, Android.
+
 Метод подготавливает полный физический путь: хеширует сегменты `encryptedPath` и создаёт/проверяет структуру папок по заданным режимам.
 
 **Важно о последнем сегменте пути:**
@@ -819,7 +938,7 @@ else
 ### 🔄 Конвертация объектов
 
 #### `Convert(object data)` → `byte[]`
-Сериализует любой объект в байты с помощью MessagePack.
+Сериализует объект в байты с помощью MessagePack.
 
 ```csharp
 // Сериализация объектов
@@ -907,6 +1026,9 @@ var user = PlayerData.Convert<User>(decryptedData);
 ```
 
 ### 🌐 Сетевое взаимодействие
+
+Методы упаковывают и разбирают сообщения. Передача байтов выполняется
+транспортом приложения.
 
 #### `EncryptNetworkData(object data)` → `byte[]`
 Подготавливает объект для сетевой передачи: сериализует, шифрует и добавляет маркеры.
@@ -1024,3 +1146,12 @@ storage.Log += LogToFile;
 // Отписка от события
 storage.Log -= LogToConsole;
 ```
+
+## 🖥️ Готовые сборки
+
+В пакет входят готовые сборки для Windows x64,
+Linux x64 / ARMv7 / ARM64 отдельно для glibc и musl,
+Android ARMv7 / ARM64 / x86 / x64 и WebAssembly для .NET 10.
+
+Нативная часть для Linux поддерживает glibc 2.17 и новее или musl (включая Alpine).
+ARMv7 использует hard-float ABI.

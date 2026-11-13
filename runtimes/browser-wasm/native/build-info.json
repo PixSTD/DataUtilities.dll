@@ -1,0 +1,10 @@
+{
+  "runtime": "browser-wasm",
+  "crypto": "Mbed TLS 3.6.7",
+  "emscripten": "3.1.56",
+  "dotnet_tested": "net10.0",
+  "header": "NativeCrypto/crypto_api.h",
+  "source_sha256": "23718d02f54691639a51ced42b6056a1c5938e77259836a8a7e04ef2c8203ad7",
+  "mbedtls_source_sha256": "a7e8bcbec0e6f761b4af24f25677626b35f762f68eef79c08677a363212d11f6",
+  "archive_sha256": "98516589c87fd763d0be8556c763893a2ed1e7264b20394f1a833959b7a9889a"
+}
